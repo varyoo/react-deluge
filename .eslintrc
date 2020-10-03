@@ -1,0 +1,43 @@
+/*
+npm i --save-dev eslint-config-react-app \
+    eslint-plugin-prettier \
+    eslint-config-prettier \
+    babel-eslint eslint-plugin-import \
+    eslint-plugin-flowtype \
+    eslint-plugin-jsx-a11y \
+    eslint-plugin-react \
+    eslint-plugin-react-hooks \
+    prettier
+*/
+{
+    "root": true,
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "sourceType": "module",
+      "parser": "babel-eslint"
+    },
+    "env": {
+      "commonjs": true,
+      "es6": true,
+      "node": true
+    },
+    "extends": ["react-app", "plugin:prettier/recommended"],
+  
+    "settings": {
+      "import/resolver": {
+        "node": {
+          "paths": ["src"]
+        }
+      }
+    },
+  
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "endOfLine": "auto"
+        }
+      ]
+    }
+  }
+  

@@ -1,0 +1,3 @@
+[submodule "node-deluge-rpc"]
+	path = node-deluge-rpc
+	url = https://github.com/cinderblock/node-deluge-rpc
