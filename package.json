@@ -10,7 +10,7 @@
     "build": "webpack --config webpack.build.config.js --mode production",
     "package": "npm run build",
     "postpackage": "electron-packager ./ --out=./builds",
-    "lint": "eslint --fix src/**/*.{js,jsx}"
+    "lint": "eslint --fix 'src/**/*.{js,jsx}'"
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
@@ -18,9 +18,8 @@
     "antd": "^4.6.6",
     "axios": "^0.20.0",
     "deluge-rpc-socket": "file:node-deluge-rpc",
-    "eslint-config-react-app": "^5.2.1",
-    "eslint-plugin-prettier": "^3.1.4",
     "formik": "^2.1.7",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.1",
@@ -39,9 +38,11 @@
     "electron-packager": "^15.1.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",
+    "eslint-config-react-app": "^5.2.1",
     "eslint-plugin-flowtype": "^5.2.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.21.3",
     "eslint-plugin-react-hooks": "^4.1.2",
     "file-loader": "^6.1.0",

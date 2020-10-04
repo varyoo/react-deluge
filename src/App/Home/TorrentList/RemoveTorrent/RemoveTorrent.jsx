@@ -5,7 +5,9 @@ import { closeRemoveTorrent } from ".";
 import { removeTorrent } from "../../../../actions";
 
 export default function RemoveTorrent() {
-  const { visible, hashToRemove } = useSelector((state) => state.removeTorrent);
+  const { visible, hashToRemove, sessionId } = useSelector(
+    (state) => state.removeTorrent
+  );
   const dispatch = useDispatch();
   const onFinish = useCallback(
     ({ deleteData }) => {
@@ -17,11 +19,7 @@ export default function RemoveTorrent() {
     dispatch(closeRemoveTorrent());
   }, [dispatch]);
   const [form] = Form.useForm();
-  useEffect(() => {
-    if (!visible) {
-      form.resetFields();
-    }
-  }, [visible, form]);
+  useEffect(() => form.resetFields(), [form, sessionId]);
   return (
     <Modal
       title="Remove Torrent"

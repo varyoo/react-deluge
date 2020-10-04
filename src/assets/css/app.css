@@ -38,3 +38,9 @@ h1 {
   width: 600px;
   margin: 0 auto;
 }
+
+#upload-button {
+  white-space: normal;
+  min-height: 32px;
+  height: auto;
+}

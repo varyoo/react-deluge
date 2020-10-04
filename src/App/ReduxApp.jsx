@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Home } from "./home";
-import Login from "./login/Login";
+import Home from "./Home";
+import Login from "./Login";
 
 function ReduxApp() {
   const { connected } = useSelector((state) => state.user);

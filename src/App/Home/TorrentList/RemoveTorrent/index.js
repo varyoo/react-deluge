@@ -1,4 +1,5 @@
-export { default as RemoveTorrent } from "./RemoveTorrent";
+import RemoveTorrent from "./RemoveTorrent";
+export default RemoveTorrent;
 export {
   default as reducer,
   open as openRemoveTorrent,

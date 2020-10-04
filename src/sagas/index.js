@@ -1,17 +1,19 @@
 import { call, put, takeLatest, delay, all, race } from "redux-saga/effects";
 import DelugeRPC, { isRPCError } from "deluge-rpc-socket";
 import { connect } from "tls";
-import { setTableData } from "../app/home/torrentList";
+import { setTableData } from "../App/Home/TorrentList";
 import { SET_STATE, ADD_TORRENT_FILE, REMOVE_TORRENT, LOGIN } from "../actions";
 import { readFileSync } from "fs";
 import {
   setAddTorrentError,
   onTorrentAdded,
-} from "../app/home/torrentList/addTorrent";
-import { closeRemoveTorrent } from "../app/home/torrentList/removeTorrent";
+} from "../App/Home/TorrentList/AddTorrent";
+import { closeRemoveTorrent } from "../App/Home/TorrentList/RemoveTorrent";
 import { basename } from "path";
 import { onLoginSuccess, onLoginFailed } from "../user/reducer.js";
 import { notifyError } from "../notify";
+import { setDownloadLocation } from "../App/Home/TorrentList/AddTorrent";
+import { getDelugeErrorMessage } from "../utils";
 
 function* connectToDeluge(host, port, username, password) {
   let socket, timeout;
@@ -67,7 +69,7 @@ function* connectToDeluge(host, port, username, password) {
     yield sent;
     const res = yield result;
     if (isRPCError(res)) {
-      yield put(onLoginFailed(res.message));
+      yield put(onLoginFailed(getDelugeErrorMessage(res)));
       return;
     }
   } catch (err) {
@@ -149,9 +151,10 @@ function* addTorrentFile({ payload }) {
     yield sent;
     const res = yield result;
     if (isRPCError(res)) {
-      yield put(setAddTorrentError(res.message));
+      yield put(setAddTorrentError(getDelugeErrorMessage(res)));
       return;
     }
+    setDownloadLocation(downloadLocation);
     yield put(onTorrentAdded());
   } catch (err) {
     yield put(setAddTorrentError(err.message));
@@ -173,7 +176,7 @@ function* removeTorrent({ payload }) {
     yield sent;
     const res = yield result;
     if (isRPCError(res)) {
-      notifyError(res, { tag: "Torrent removal" });
+      notifyError(getDelugeErrorMessage(res), { tag: "Torrent removal" });
     }
   } catch (err) {
     notifyError(err, { tag: "Torrent removal" });

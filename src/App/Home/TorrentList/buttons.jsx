@@ -5,7 +5,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { Button } from "antd";
-import { openRemoveTorrent } from "./removeTorrent";
+import { openRemoveTorrent } from "./RemoveTorrent";
 import { useDispatch } from "react-redux";
 import * as actions from "../../../actions";
 

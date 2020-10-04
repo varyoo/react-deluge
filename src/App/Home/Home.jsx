@@ -1,10 +1,10 @@
 import React, { useCallback } from "react";
-import { TorrentList } from "./torrentList";
-import { AddTorrent, openAddTorrent } from "./torrentList/addTorrent";
+import TorrentList from "./TorrentList";
+import AddTorrent, { openAddTorrent } from "./TorrentList/AddTorrent";
 import { Button, Layout, PageHeader } from "antd";
 import { CloudUploadOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
-import { RemoveTorrent } from "./torrentList/removeTorrent";
+import RemoveTorrent from "./TorrentList/RemoveTorrent";
 import { logout } from "../../user";
 
 const { Content } = Layout;
@@ -24,7 +24,6 @@ function Home() {
       <Content style={{ padding: "0 50px" }}>
         <PageHeader
           title="React-Deluge"
-          subTitle="Your Torrents"
           avatar={{ icon: <CloudUploadOutlined /> }}
           extra={[
             <Button key="1" type="primary" onClick={onAddTorrent}>

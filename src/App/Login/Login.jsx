@@ -11,10 +11,9 @@ function Login() {
       <Content style={{ padding: "0 50px" }}>
         <PageHeader
           title="React-Deluge"
-          subTitle="Please login"
           avatar={{ icon: <CloudUploadOutlined /> }}
         />
-        <Card title="Parameters" id="login-card">
+        <Card title="Please login" id="login-card">
           <LoginForm />
         </Card>
       </Content>

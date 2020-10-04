@@ -1,7 +1,7 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import { reducer as torrentListReducer } from "../app/home/torrentList";
-import { reducer as addTorrentReducer } from "../app/home/torrentList/addTorrent";
-import { reducer as removeTorrentReducer } from "../app/home/torrentList/removeTorrent";
+import { reducer as torrentListReducer } from "../App/Home/TorrentList";
+import { reducer as addTorrentReducer } from "../App/Home/TorrentList/AddTorrent";
+import { reducer as removeTorrentReducer } from "../App/Home/TorrentList/RemoveTorrent";
 import { reducer as userReducer } from "../user";
 
 export default combineReducers({

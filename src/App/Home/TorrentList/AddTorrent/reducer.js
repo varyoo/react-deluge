@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   visible: false,
+  sessionId: 1,
 };
 
 const torrentListSlice = createSlice({
@@ -20,6 +21,8 @@ const torrentListSlice = createSlice({
     onSuccess(state, { payload }) {
       state.error = undefined;
       state.visible = false;
+      // reset form fields
+      state.sessionId++;
     },
   },
 });
