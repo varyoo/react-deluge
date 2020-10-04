@@ -37,7 +37,11 @@ npm i --save-dev eslint-config-react-app \
         {
           "endOfLine": "auto"
         }
-      ]
+      ],
+      "react/prop-types": [2, { "skipUndeclared": true }],
+      "react/jsx-key": 1,
+      "react/no-array-index-key": 1,
+      "react/require-default-props": 2,
     }
   }
   

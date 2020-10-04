@@ -45,6 +45,6 @@ UploadTorrentFile.propTypes = {
   onChange: PropTypes.func,
 };
 
-UploadTorrentFile.propTypes = {
+UploadTorrentFile.defaultProps = {
   onChange: () => {},
 };
