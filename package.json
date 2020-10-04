@@ -4,12 +4,13 @@
   "version": "1.0.0",
   "homepage": "./",
   "main": "main.js",
+  "private": true,
   "scripts": {
     "prod": "webpack --mode production --config webpack.build.config.js && electron --noDevServer .",
     "start": "webpack-dev-server --hot --host 0.0.0.0 --config=./webpack.dev.config.js --mode development",
     "build": "webpack --config webpack.build.config.js --mode production",
     "package": "npm run build",
-    "postpackage": "electron-packager ./ --out=./builds",
+    "postpackage": "electron-packager ./ --out=./builds --overwrite",
     "lint": "eslint --fix 'src/**/*.{js,jsx}'"
   },
   "husky": {
@@ -29,6 +30,7 @@
     "antd": "^4.6.6",
     "axios": "^0.20.0",
     "deluge-rpc-socket": "file:node-deluge-rpc",
+    "electron-is-dev": "^1.2.0",
     "formik": "^2.1.7",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",

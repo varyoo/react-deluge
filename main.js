@@ -1,33 +1,17 @@
-// main.js
-
-'use strict'
+"use strict";
 
 // Import parts of electron to use
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const url = require("url");
 
-// Add React extension for development
-const {
-  default: installExtension,
-  REACT_DEVELOPER_TOOLS,
-} = require("electron-devtools-installer");
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 // Keep a reference for dev mode
-let dev = false;
-
 // Determine the mode (dev or production)
-if (
-  process.defaultApp ||
-  /[\\/]electron-prebuilt[\\/]/.test(process.execPath) ||
-  /[\\/]electron[\\/]/.test(process.execPath)
-) {
-  dev = true;
-}
+const dev = require("electron-is-dev");
 
 // Temporary fix for broken high-dpi scale factor on Windows (125% scaling)
 // info: https://github.com/electron/electron/issues/9691
@@ -77,6 +61,11 @@ function createWindow() {
 
     // Open the DevTools automatically if developing
     if (dev) {
+      // Add React extension for development
+      const {
+        default: installExtension,
+        REACT_DEVELOPER_TOOLS,
+      } = require("electron-devtools-installer");
       installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
         console.log("Error loading React DevTools: ", err)
       );
