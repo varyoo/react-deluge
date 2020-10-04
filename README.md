@@ -9,8 +9,8 @@ The very first React Front-end for the Deluge BitTorrent client.
 
 # Screenshots
 
-![react-deluge-login](https://user-images.githubusercontent.com/8150894/95020327-fbb91980-0659-11eb-9e29-79ec8a6ab98d.png)
-![react-deluge-downloads](https://user-images.githubusercontent.com/8150894/95020328-fc51b000-0659-11eb-8ef4-e57d64dc07af.png)
+![react-deluge-login](https://user-images.githubusercontent.com/8150894/95020742-73884380-065c-11eb-9e9a-4827e3c66fd1.png)
+![react-deluge-downloads](https://user-images.githubusercontent.com/8150894/95020743-76833400-065c-11eb-8eb2-68acae9855c4.png)
 
 # Installation guide
 
