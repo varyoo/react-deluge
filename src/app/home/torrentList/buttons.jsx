@@ -12,11 +12,7 @@ import * as actions from "../../../actions";
 export function ResumeButton({ hash }) {
   const dispatch = useDispatch();
   return (
-    <Button
-      type="primary"
-      size="large"
-      onClick={() => dispatch(actions.resume(hash))}
-    >
+    <Button type="primary" onClick={() => dispatch(actions.resume(hash))}>
       <PlayCircleOutlined />
       Resume
     </Button>
@@ -26,7 +22,7 @@ export function ResumeButton({ hash }) {
 export function PauseButton({ hash }) {
   const dispatch = useDispatch();
   return (
-    <Button size="large" onClick={() => dispatch(actions.pause(hash))}>
+    <Button onClick={() => dispatch(actions.pause(hash))}>
       <PauseCircleOutlined />
       Pause
     </Button>
@@ -36,7 +32,7 @@ export function PauseButton({ hash }) {
 export const RemoveButton = ({ hash }) => {
   const dispatch = useDispatch();
   return (
-    <Button size="large" onClick={() => dispatch(openRemoveTorrent(hash))}>
+    <Button onClick={() => dispatch(openRemoveTorrent(hash))}>
       <DeleteOutlined />
     </Button>
   );

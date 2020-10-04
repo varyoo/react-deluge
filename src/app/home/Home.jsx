@@ -18,7 +18,7 @@ function Home() {
     dispatch(logout());
   }, [dispatch]);
   return (
-    <Layout>
+    <Layout style={{ height: "100vh" }}>
       <AddTorrent />
       <RemoveTorrent />
       <Content style={{ padding: "0 50px" }}>

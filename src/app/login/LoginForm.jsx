@@ -35,7 +35,6 @@ function LoginForm() {
       name="login"
       initialValues={initialValues}
       onFinish={onFinish}
-      id="login-form"
     >
       {error ? (
         <Form.Item label=" " colon={false}>

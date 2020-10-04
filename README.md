@@ -7,6 +7,11 @@ The very first React Front-end for the Deluge BitTorrent client.
 * Redux-Saga
 * Ant Design
 
+# Screenshots
+
+![react-deluge-login](https://user-images.githubusercontent.com/8150894/95020327-fbb91980-0659-11eb-9e29-79ec8a6ab98d.png)
+![react-deluge-downloads](https://user-images.githubusercontent.com/8150894/95020328-fc51b000-0659-11eb-8ef4-e57d64dc07af.png)
+
 # Installation guide
 
 ## Deluge daemon
