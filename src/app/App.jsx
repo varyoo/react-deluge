@@ -4,7 +4,7 @@ import { createStore, applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 import runAllSagas from "../sagas";
 import rootReducer from "../rootReducer";
-import { Home } from "./home";
+import ReduxApp from "./ReduxApp";
 
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
@@ -16,7 +16,7 @@ function App() {
   return (
     <React.StrictMode>
       <Provider store={store}>
-        <Home />
+        <ReduxApp />
       </Provider>
     </React.StrictMode>
   );

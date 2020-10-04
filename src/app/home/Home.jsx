@@ -5,6 +5,7 @@ import { Button, Layout, PageHeader } from "antd";
 import { CloudUploadOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { RemoveTorrent } from "./torrentList/removeTorrent";
+import { logout } from "../../user";
 
 const { Content } = Layout;
 
@@ -13,6 +14,9 @@ function Home() {
   const onAddTorrent = useCallback(() => {
     dispatch(openAddTorrent());
   }, [dispatch]);
+  const onLogout = useCallback(() => {
+    dispatch(logout());
+  }, [dispatch]);
   return (
     <Layout>
       <AddTorrent />
@@ -20,10 +24,14 @@ function Home() {
       <Content style={{ padding: "0 50px" }}>
         <PageHeader
           title="React-Deluge"
+          subTitle="Your Torrents"
           avatar={{ icon: <CloudUploadOutlined /> }}
           extra={[
-            <Button key="1" type="primary" onClick={onAddTorrent} size="large">
+            <Button key="1" type="primary" onClick={onAddTorrent}>
               Add New Torrent
+            </Button>,
+            <Button key="2" onClick={onLogout}>
+              Log Out
             </Button>,
           ]}
         />

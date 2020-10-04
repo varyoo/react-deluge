@@ -33,3 +33,8 @@ h1 {
   font-size: 21px;
   font-weight: 200;
 }
+
+#login-form {
+  width: 600px;
+  margin: 0 auto;
+}
