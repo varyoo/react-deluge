@@ -3,6 +3,7 @@ import { Button } from "antd";
 import { Alert, Form, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions";
+import { LoginOutlined } from "@ant-design/icons";
 
 // sensible defaults
 const DEFAULT_HOST = "127.0.0.1";
@@ -58,6 +59,7 @@ function LoginForm() {
       {/* Submit */}
       <Form.Item label=" " colon={false}>
         <Button type="primary" htmlType="submit">
+          <LoginOutlined />
           Connect
         </Button>
       </Form.Item>

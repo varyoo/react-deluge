@@ -2,7 +2,11 @@ import React, { useCallback } from "react";
 import TorrentList from "./TorrentList";
 import AddTorrent, { openAddTorrent } from "./TorrentList/AddTorrent";
 import { Button, Layout, PageHeader } from "antd";
-import { CloudUploadOutlined } from "@ant-design/icons";
+import {
+  CloudUploadOutlined,
+  LogoutOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import RemoveTorrent from "./TorrentList/RemoveTorrent";
 import { logout } from "../../user";
@@ -27,9 +31,11 @@ function Home() {
           avatar={{ icon: <CloudUploadOutlined /> }}
           extra={[
             <Button key="1" type="primary" onClick={onAddTorrent}>
+              <PlusOutlined />
               Add New Torrent
             </Button>,
             <Button key="2" onClick={onLogout}>
+              <LogoutOutlined />
               Log Out
             </Button>,
           ]}

@@ -5,6 +5,7 @@ import { addTorrentFile } from "../../../../actions";
 import { useDispatch } from "react-redux";
 import UploadTorrentFile from "./UploadTorrentFile";
 import { getDownloadLocation } from "./storage";
+import { CheckOutlined } from "@ant-design/icons";
 
 export default function AddTorrentForm({ sessionId, error }) {
   const dispatch = useDispatch();
@@ -56,6 +57,7 @@ export default function AddTorrentForm({ sessionId, error }) {
       </Form.Item>
       <Form.Item label=" " colon={false}>
         <Button type="primary" htmlType="submit">
+          <CheckOutlined />
           Upload
         </Button>
       </Form.Item>

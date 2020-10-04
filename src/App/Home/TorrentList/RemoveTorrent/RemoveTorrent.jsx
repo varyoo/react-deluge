@@ -3,6 +3,7 @@ import { Modal, Form, Button, Checkbox } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { closeRemoveTorrent } from ".";
 import { removeTorrent } from "../../../../actions";
+import { DeleteOutlined } from "@ant-design/icons";
 
 export default function RemoveTorrent() {
   const { visible, hashToRemove, sessionId } = useSelector(
@@ -35,7 +36,8 @@ export default function RemoveTorrent() {
         onFinish={onFinish}
       >
         <Form.Item
-          label="Also delete data"
+          label="Also delete data?"
+          colon={false}
           name="deleteData"
           rules={[
             {
@@ -47,7 +49,8 @@ export default function RemoveTorrent() {
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Confirm removal
+            <DeleteOutlined />
+            Confirm Removal
           </Button>
         </Form.Item>
       </Form>
