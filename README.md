@@ -1,28 +1,31 @@
+# React-Deluge
+
 The very first React Front-end for the Deluge BitTorrent client.
 
-# Technical stack
+## Technical stack
 
-* React
 * Electron
+* React
 * Redux-Saga
 * Ant Design
+* Testing Library
 
-# Screenshots
+## Screenshots
 
 ![react-deluge-login](https://user-images.githubusercontent.com/8150894/95030169-4e67f500-069d-11eb-950c-34c66e40335c.png)
 ![react-deluge-downloads](https://user-images.githubusercontent.com/8150894/95030170-4f008b80-069d-11eb-972c-1380298d0365.png)
 ![react-deluge-add](https://user-images.githubusercontent.com/8150894/95030171-4f008b80-069d-11eb-89ae-6db639e374e8.png)
 
 
-# Arch Linux package
+## Arch Linux package
 
 Easy as `trizen -S react-deluge-git`
 
 See https://aur.archlinux.org/packages/react-deluge-git/
 
-# Installation guide
+## Installation guide
 
-## Deluge daemon
+### Deluge daemon
 
 Configure deluged `~/.config/systemd/user/deluged.service`:
 
@@ -50,7 +53,7 @@ Start deluged :
 systemctl --user start deluged
 ~~~
 
-## Build
+### Build
 
 `node-deluge-rpc` is bundled as a submodule because the npm package is outdated.
 
