@@ -15,32 +15,36 @@ import { notifyError } from "../notify";
 import { setDownloadLocation } from "../App/Home/TorrentList/AddTorrent";
 import { getDelugeErrorMessage } from "../utils";
 
-function* connectToDeluge(host, port, username, password) {
-  let { socket, timeout } = yield race({
-    socket: new Promise((accept) => {
-      accept(
-        connect({
-          // Deluge often runs with self-signed certificates
-          rejectUnauthorized: false,
-          timeout: 1000,
-          host,
-          port,
-        })
-      );
-    }),
+function getSocket(host, port) {
+  return connect({
+    // Deluge often runs with self-signed certificates
+    rejectUnauthorized: false,
+    timeout: 1000,
+    host,
+    port,
+  });
+}
+
+function getDeluge(socket) {
+  return DelugeRPC(socket, { protocolVersion: 1 });
+}
+
+export function* connectToDeluge(host, port, username, password) {
+  const { socket, timeout } = yield race({
+    socket: new Promise((accept) => accept(getSocket(host, port))),
     timeout: delay(1000),
   });
   if (timeout) {
     throw new Error("timeout");
   }
 
-  const deluge = DelugeRPC(socket, { protocolVersion: 1 });
+  const deluge = getDeluge(socket);
   // Listen for asynchronous events from daemon
   deluge.events.on("delugeEvent", console.log);
   // Non fatal decoding errors that indicate something is wrong with the protocol...
   deluge.events.on("decodingError", console.log);
 
-  socket = yield new Promise(function (resolve, reject) {
+  yield new Promise(function (resolve, reject) {
     socket.on("secureConnect", resolve);
     socket.on("error", reject);
   });
