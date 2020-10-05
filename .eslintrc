@@ -42,6 +42,16 @@ npm i --save-dev eslint-config-react-app \
       "react/jsx-key": 1,
       "react/no-array-index-key": 1,
       "react/require-default-props": 2,
+      // https://eslint.org/docs/rules/no-unused-vars
+      "no-unused-vars": [
+        "error", 
+        { 
+          "vars": "all",
+          "args": "none", 
+          "ignoreRestSiblings": false,
+          "argsIgnorePattern": "^_" 
+        }
+      ]
     }
   }
   

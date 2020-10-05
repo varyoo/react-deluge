@@ -11,8 +11,7 @@ export default function AddTorrentForm({ sessionId, error }) {
   const dispatch = useDispatch();
   const onFinish = useCallback(
     ({ downloadLocation, file }) => {
-      const localPath = file.fileList[0].originFileObj.path; // FIXME
-      dispatch(addTorrentFile(downloadLocation, localPath));
+      dispatch(addTorrentFile(downloadLocation, file));
     },
     [dispatch]
   );

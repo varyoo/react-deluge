@@ -1,4 +1,3 @@
-import ErrorBoundary from "antd/lib/alert/ErrorBoundary";
 import { connectToDeluge, __RewireAPI__ as sagasRewireAPI } from "..";
 
 const fakeSocket = {

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { closeAddTorrent } from ".";
 import AddTorrentForm from "./AddTorrentForm";
 
-export default function AddTorrent({ ...props }) {
+export default function AddTorrent() {
   const { visible, sessionId, error } = useSelector((state) => state.addTorrent);
   const dispatch = useDispatch();
   const onCancel = useCallback(() => {

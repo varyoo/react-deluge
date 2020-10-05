@@ -12,14 +12,8 @@ export default function UploadTorrentFile({ onChange }) {
   }, []);
   const [state, setState] = useState({ title: DEFAULT_TITLE });
   const handleChange = useCallback(
-    ({ file, fileList, ...restInfo }) => {
-      // keep the last file only
-      const singleFileList = fileList.slice(-1);
-      onChange({
-        ...restInfo,
-        file,
-        fileList: singleFileList,
-      });
+    ({ file }) => {
+      onChange(file.path);
       setState({
         ...state,
         title: file.name || DEFAULT_TITLE,
