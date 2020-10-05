@@ -10,80 +10,48 @@ import {
 } from "../App/Home/TorrentList/AddTorrent";
 import { closeRemoveTorrent } from "../App/Home/TorrentList/RemoveTorrent";
 import { basename } from "path";
-import { onLoginSuccess, onLoginFailed } from "../user/reducer.js";
+import { onLoginSuccess, onLoginFailed, setUser as saveUser } from "../user";
 import { notifyError } from "../notify";
 import { setDownloadLocation } from "../App/Home/TorrentList/AddTorrent";
 import { getDelugeErrorMessage } from "../utils";
 
 function* connectToDeluge(host, port, username, password) {
-  let socket, timeout;
-  try {
-    ({ socket, timeout } = yield race({
-      socket: new Promise((accept) => {
-        accept(
-          connect({
-            // Deluge often runs with self-signed certificates
-            rejectUnauthorized: false,
-            timeout: 1000,
-            host,
-            port,
-          })
-        );
-      }),
-      timeout: delay(1000),
-    }));
-    if (timeout) {
-      throw new Error("timeout");
-    }
-  } catch (err) {
-    // connect error
-    yield put(onLoginFailed("Connection error : " + err.message));
-    return;
+  let { socket, timeout } = yield race({
+    socket: new Promise((accept) => {
+      accept(
+        connect({
+          // Deluge often runs with self-signed certificates
+          rejectUnauthorized: false,
+          timeout: 1000,
+          host,
+          port,
+        })
+      );
+    }),
+    timeout: delay(1000),
+  });
+  if (timeout) {
+    throw new Error("timeout");
   }
 
-  let deluge;
-  try {
-    deluge = DelugeRPC(socket, { protocolVersion: 1 });
-  } catch (err) {
-    yield put(onLoginFailed(err.message));
-    return;
-  }
+  const deluge = DelugeRPC(socket, { protocolVersion: 1 });
   // Listen for asynchronous events from daemon
   deluge.events.on("delugeEvent", console.log);
   // Non fatal decoding errors that indicate something is wrong with the protocol...
   deluge.events.on("decodingError", console.log);
 
-  try {
-    socket = yield new Promise(function (resolve, reject) {
-      socket.on("secureConnect", resolve);
-      socket.on("error", reject);
-    });
-  } catch (err) {
-    // socket error
-    yield put(onLoginFailed(err.message));
-    return;
-  }
+  socket = yield new Promise(function (resolve, reject) {
+    socket.on("secureConnect", resolve);
+    socket.on("error", reject);
+  });
 
   const { result, sent } = deluge.daemon.login(username, password);
-  try {
-    yield sent;
-    const res = yield result;
-    if (isRPCError(res)) {
-      yield put(onLoginFailed(getDelugeErrorMessage(res)));
-      return;
-    }
-  } catch (err) {
-    yield put(onLoginFailed(err.message));
+  yield sent;
+  const res = yield result;
+  if (isRPCError(res)) {
+    throw new Error(getDelugeErrorMessage(res));
   }
   return deluge;
-}
-
-export function* getDeluge() {
-  const host = localStorage.getItem("host");
-  const port = localStorage.getItem("port");
-  const username = localStorage.getItem("username");
-  const password = localStorage.getItem("password");
-  return yield* connectToDeluge(host, port, username, password);
 }
 
 function getTorrentsTableData(torrents) {
@@ -104,26 +72,19 @@ function getTorrentsTableData(torrents) {
   return data;
 }
 
-export function* pollTorrentList() {
+function* pollTorrentList(deluge) {
   while (true) {
-    const deluge = yield call(getDeluge);
-    if (deluge) {
-      const { sent, result } = deluge.core.getTorrentsStatus([], [], {});
-      yield sent;
-      const torrentsStatus = yield result;
-      const tableData = yield call(getTorrentsTableData, torrentsStatus);
-      yield put(setTableData(tableData));
-    }
+    const { sent, result } = deluge.core.getTorrentsStatus([], [], {});
+    yield sent;
+    const torrentsStatus = yield result;
+    const tableData = yield call(getTorrentsTableData, torrentsStatus);
+    yield put(setTableData(tableData));
     yield delay(1000);
   }
 }
 
-function* setTorrentState({ payload }) {
+function* setTorrentState(deluge, { payload }) {
   const { action, hash } = payload;
-  const deluge = yield call(getDeluge);
-  if (!deluge) {
-    return;
-  }
   const { sent, result } =
     action === "pause"
       ? deluge.core.pauseTorrent([hash])
@@ -132,14 +93,13 @@ function* setTorrentState({ payload }) {
   yield result;
 }
 
-export function* watchSetTorrentState() {
-  yield takeLatest(SET_STATE, setTorrentState);
+export function* watchSetTorrentState(deluge) {
+  yield takeLatest(SET_STATE, setTorrentState, deluge);
 }
 
-function* addTorrentFile({ payload }) {
+function* addTorrentFile(deluge, { payload }) {
   const { downloadLocation, localPath, options } = payload;
   const filename = basename(localPath);
-  const deluge = yield call(getDeluge);
   const buffer = yield new Promise((resolve, reject) => {
     resolve(readFileSync(localPath));
   });
@@ -161,16 +121,12 @@ function* addTorrentFile({ payload }) {
   }
 }
 
-function* watchAddTorrentFile() {
-  yield takeLatest(ADD_TORRENT_FILE, addTorrentFile);
+function* watchAddTorrentFile(deluge) {
+  yield takeLatest(ADD_TORRENT_FILE, addTorrentFile, deluge);
 }
 
-function* removeTorrent({ payload }) {
+function* removeTorrent(deluge, { payload }) {
   const { hashToRemove, deleteData } = payload;
-  const deluge = yield call(getDeluge);
-  if (!deluge) {
-    return;
-  }
   const { sent, result } = deluge.core.removeTorrent(hashToRemove, deleteData);
   try {
     yield sent;
@@ -184,22 +140,42 @@ function* removeTorrent({ payload }) {
   yield put(closeRemoveTorrent());
 }
 
-function* watchRemoveTorrent() {
-  yield takeLatest(REMOVE_TORRENT, removeTorrent);
+function* watchRemoveTorrent(deluge) {
+  yield takeLatest(REMOVE_TORRENT, removeTorrent, deluge);
+}
+
+/**
+ * Redux-saga's all() is actually all-or-nothing:
+ * if one of the tasks throws an error,
+ * all tasks that are stil running are cancelled.
+ * https://redux-saga.js.org/docs/advanced/ForkModel.html
+ * @param {*} deluge socket
+ */
+function* runUserSagas(deluge) {
+  try {
+    yield all([
+      pollTorrentList(deluge),
+      watchSetTorrentState(deluge),
+      watchAddTorrentFile(deluge),
+      watchRemoveTorrent(deluge),
+    ]);
+  } catch (err) {
+    yield put(onLoginFailed(err.message));
+  }
 }
 
 function* login({ payload }) {
   const { host, port, username, password } = payload;
-  const deluge = yield call(connectToDeluge, host, port, username, password);
-  if (!deluge) {
-    // errors are handled by connectToDeluge
+  let deluge;
+  try {
+    deluge = yield call(connectToDeluge, host, port, username, password);
+  } catch (err) {
+    yield put(onLoginFailed(err.message));
     return;
   }
-  localStorage.setItem("host", host);
-  localStorage.setItem("port", port);
-  localStorage.setItem("username", username);
-  localStorage.setItem("password", password);
+  saveUser(host, port, username, password);
   yield put(onLoginSuccess());
+  yield* runUserSagas(deluge);
 }
 
 function* watchLogin() {
@@ -207,11 +183,5 @@ function* watchLogin() {
 }
 
 export default function* runAll() {
-  yield all([
-    pollTorrentList(),
-    watchSetTorrentState(),
-    watchAddTorrentFile(),
-    watchRemoveTorrent(),
-    watchLogin(),
-  ]);
+  yield all([watchLogin()]);
 }

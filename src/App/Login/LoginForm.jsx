@@ -4,6 +4,7 @@ import { Alert, Form, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../actions";
 import { LoginOutlined } from "@ant-design/icons";
+import { getUser } from "../../user";
 
 // sensible defaults
 const DEFAULT_HOST = "127.0.0.1";
@@ -14,10 +15,7 @@ function LoginForm() {
   const { error } = useSelector((state) => state.user);
   const [form] = Form.useForm();
   const initialValues = {
-    host: localStorage.getItem("host"),
-    port: localStorage.getItem("port"),
-    username: localStorage.getItem("username"),
-    password: localStorage.getItem("password"),
+    ...getUser(),
   };
   const dispatch = useDispatch();
   const onFinish = useCallback(

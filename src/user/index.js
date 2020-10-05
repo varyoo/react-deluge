@@ -4,3 +4,4 @@ export {
   onLoginFailed,
   logout,
 } from "./reducer";
+export * from "./storage";
