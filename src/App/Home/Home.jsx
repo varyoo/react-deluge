@@ -10,8 +10,10 @@ import {
 import { useDispatch } from "react-redux";
 import RemoveTorrent from "./TorrentList/RemoveTorrent";
 import { logout } from "../../user";
+import SideStats from "./SideStats";
+import { WIDTH_SIDER } from "../../utils";
 
-const { Content } = Layout;
+const { Content, Sider } = Layout;
 
 function Home() {
   const dispatch = useDispatch();
@@ -25,23 +27,28 @@ function Home() {
     <Layout style={{ height: "100vh" }}>
       <AddTorrent />
       <RemoveTorrent />
-      <Content style={{ padding: "0 50px" }}>
-        <PageHeader
-          title="React-Deluge"
-          avatar={{ icon: <CloudUploadOutlined /> }}
-          extra={[
-            <Button key="1" type="primary" onClick={onAddTorrent}>
-              <PlusOutlined />
-              Add New Torrent
-            </Button>,
-            <Button key="2" onClick={onLogout}>
-              <LogoutOutlined />
-              Log Out
-            </Button>,
-          ]}
-        />
-        <TorrentList />
-      </Content>
+      <Sider width={WIDTH_SIDER}>
+        <SideStats width={WIDTH_SIDER} />
+      </Sider>
+      <Layout style={{ padding: "0 50px" }}>
+        <Content>
+          <PageHeader
+            title="React-Deluge"
+            avatar={{ icon: <CloudUploadOutlined /> }}
+            extra={[
+              <Button key="1" type="primary" onClick={onAddTorrent}>
+                <PlusOutlined />
+                Add New Torrent
+              </Button>,
+              <Button key="2" onClick={onLogout}>
+                <LogoutOutlined />
+                Log Out
+              </Button>,
+            ]}
+          />
+          <TorrentList />
+        </Content>
+      </Layout>
     </Layout>
   );
 }

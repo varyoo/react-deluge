@@ -11,9 +11,10 @@ import {
 import { closeRemoveTorrent } from "../App/Home/TorrentList/RemoveTorrent";
 import { basename } from "path";
 import { onLoginSuccess, onLoginFailed, setUser as saveUser } from "../user";
-import { notifyError } from "../notify";
+import { notifyError, notifyWarning } from "../notify";
 import { setDownloadLocation } from "../App/Home/TorrentList/AddTorrent";
 import { getDelugeErrorMessage } from "../utils";
+import { setStats } from "../App/Home";
 
 function getSocket(host, port) {
   return connect({
@@ -76,13 +77,40 @@ function getTorrentsTableData(torrents) {
   return data;
 }
 
+function* runRequest({ sent, result }) {
+  yield sent;
+  const { res, timeout } = yield race({
+    res: result,
+    timeout: delay(1000),
+  });
+  if (timeout) {
+    throw new Error("timeout");
+  }
+  return res;
+}
+
+function* getTorrents(deluge) {
+  let request = deluge.core.getTorrentsStatus([], [], {});
+  return yield call(runRequest, request);
+}
+
+function* getStats(deluge) {
+  const request = deluge.core.getSessionStatus([
+    "payload_download_rate",
+    "payload_upload_rate",
+  ]);
+  return yield call(runRequest, request);
+}
+
 function* pollTorrentList(deluge) {
   while (true) {
-    const { sent, result } = deluge.core.getTorrentsStatus([], [], {});
-    yield sent;
-    const torrentsStatus = yield result;
-    const tableData = yield call(getTorrentsTableData, torrentsStatus);
+    const torrents = yield call(getTorrents, deluge);
+    const tableData = yield call(getTorrentsTableData, torrents);
     yield put(setTableData(tableData));
+
+    const stats = yield call(getStats, deluge);
+    yield put(setStats(stats));
+
     yield delay(1000);
   }
 }
@@ -149,6 +177,41 @@ function* watchRemoveTorrent(deluge) {
 }
 
 /**
+ * feed fake stats to Redux
+ */
+/*function* testStats() {
+  const random = d3.randomUniform(0, 5);
+  let i = 0;
+  while (true) {
+    yield put(
+      addPointInTime({ payloadDownloadRate: random(), payloadUploadRate: random() })
+    );
+    if (i % 2 == 0) {
+      yield put(
+        addPointInTime({
+          payloadDownloadRate: random(),
+          payloadUploadRate: random(),
+        })
+      );
+      yield put(
+        addPointInTime({
+          payloadDownloadRate: random(),
+          payloadUploadRate: random(),
+        })
+      );
+      yield put(
+        addPointInTime({
+          payloadDownloadRate: random(),
+          payloadUploadRate: random(),
+        })
+      );
+    }
+    yield delay(500);
+    i++;
+  }
+}*/
+
+/**
  * Redux-saga's all() is actually all-or-nothing:
  * if one of the tasks throws an error,
  * all tasks that are stil running are cancelled.
@@ -156,16 +219,12 @@ function* watchRemoveTorrent(deluge) {
  * @param {*} deluge socket
  */
 function* runUserSagas(deluge) {
-  try {
-    yield all([
-      pollTorrentList(deluge),
-      watchSetTorrentState(deluge),
-      watchAddTorrentFile(deluge),
-      watchRemoveTorrent(deluge),
-    ]);
-  } catch (err) {
-    yield put(onLoginFailed(err.message));
-  }
+  yield all([
+    pollTorrentList(deluge),
+    watchSetTorrentState(deluge),
+    watchAddTorrentFile(deluge),
+    watchRemoveTorrent(deluge),
+  ]);
 }
 
 function* login({ payload }) {
@@ -174,12 +233,23 @@ function* login({ payload }) {
   try {
     deluge = yield call(connectToDeluge, host, port, username, password);
   } catch (err) {
-    yield put(onLoginFailed(err.message));
-    return;
+    return yield put(onLoginFailed(err.message));
   }
   saveUser(host, port, username, password);
   yield put(onLoginSuccess());
-  yield* runUserSagas(deluge);
+
+  while (true) {
+    try {
+      yield* runUserSagas(deluge);
+    } catch (err) {
+      notifyWarning(err);
+      try {
+        deluge = yield call(connectToDeluge, host, port, username, password);
+      } catch (err) {
+        return yield put(onLoginFailed(err.message));
+      }
+    }
+  }
 }
 
 function* watchLogin() {

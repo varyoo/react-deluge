@@ -44,3 +44,19 @@ h1 {
   min-height: 32px;
   height: auto;
 }
+
+#side-rates {
+  margin: 16px 0px;
+}
+
+#side-stats .ant-statistic {
+  text-align: center;
+}
+
+#side-stats .ant-statistic-content {
+  display: inline-block;
+}
+
+#side-stats .ant-statistic-content-prefix {
+  font-size: 16px;
+}
