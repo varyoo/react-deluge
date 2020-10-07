@@ -54,13 +54,7 @@ function explodeBytes(bytes, precision = 2) {
 function Speed({ icon, rate, ...restProps }) {
   const { value, unit } = explodeBytes(rate, 1);
   return (
-    <Statistic
-      {...restProps}
-      value={value}
-      prefix={icon}
-      suffix={unit + "/s"}
-      class="lol"
-    />
+    <Statistic {...restProps} value={value} prefix={icon} suffix={unit + "/s"} />
   );
 }
 

@@ -13,7 +13,7 @@ The very first React Front-end for the Deluge BitTorrent client.
 ## Screenshots
 
 ![react-deluge-login](https://user-images.githubusercontent.com/8150894/95030169-4e67f500-069d-11eb-950c-34c66e40335c.png)
-![react-deluge-downloads](https://user-images.githubusercontent.com/8150894/95030170-4f008b80-069d-11eb-972c-1380298d0365.png)
+![react-deluge-downloads](https://user-images.githubusercontent.com/8150894/95367188-f9f28e80-08c3-11eb-88d7-8fa894036813.png)
 ![react-deluge-add](https://user-images.githubusercontent.com/8150894/95030171-4f008b80-069d-11eb-89ae-6db639e374e8.png)
 
 
@@ -45,6 +45,15 @@ Configure authentication `~/.config/deluged/auth`:
 
 ~~~txt
 youruser:yourpassword:10
+~~~
+
+Configure deluged :
+
+In `~/.config/deluged/core.conf`,
+find `"allow_remote"` and set it to `true`:
+
+~~~json
+"allow_remote": true
 ~~~
 
 Start deluged :
