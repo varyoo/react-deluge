@@ -1,4 +1,4 @@
-import { notification, message } from "antd";
+import { message } from "antd";
 
 export function notifyError(err, options = {}) {
   console.error(err, options);
@@ -7,8 +7,5 @@ export function notifyError(err, options = {}) {
 
 export function notifyWarning(err, options = {}) {
   console.warn(err, options);
-  notification.warning({
-    message: err.message,
-    placement: "bottomLeft",
-  });
+  message.warning(err.message);
 }

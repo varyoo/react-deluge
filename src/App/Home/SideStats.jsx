@@ -11,7 +11,7 @@ import PropTypes from "prop-types";
  * @param {number} bytes number of bytes
  * @param {number} precision number of decimals
  */
-function bytes(bytes, precision = 2) {
+function explodeBytes(bytes, precision = 2) {
   const kilobyte = 1024;
 
   const megabyte = kilobyte * 1024;
@@ -53,7 +53,7 @@ function bytes(bytes, precision = 2) {
 }
 
 function Speed({ color, icon, rate }) {
-  const { value, unit } = bytes(rate, 1);
+  const { value, unit } = explodeBytes(rate, 1);
   return (
     <Statistic
       value={value}

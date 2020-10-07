@@ -13,7 +13,7 @@ import { basename } from "path";
 import { onLoginSuccess, onLoginFailed, setUser as saveUser } from "../user";
 import { notifyError, notifyWarning } from "../notify";
 import { setDownloadLocation } from "../App/Home/TorrentList/AddTorrent";
-import { getDelugeErrorMessage } from "../utils";
+import { getDelugeErrorMessage, TimeoutError } from "../utils";
 import { setStats } from "../App/Home";
 
 function getSocket(host, port) {
@@ -36,7 +36,7 @@ export function* connectToDeluge(host, port, username, password) {
     timeout: delay(1000),
   });
   if (timeout) {
-    throw new Error("timeout");
+    throw new TimeoutError();
   }
 
   const deluge = getDeluge(socket);
@@ -84,7 +84,7 @@ function* runRequest({ sent, result }) {
     timeout: delay(1000),
   });
   if (timeout) {
-    throw new Error("timeout");
+    throw new TimeoutError();
   }
   return res;
 }
@@ -184,23 +184,23 @@ function* watchRemoveTorrent(deluge) {
   let i = 0;
   while (true) {
     yield put(
-      addPointInTime({ payloadDownloadRate: random(), payloadUploadRate: random() })
+      setStats({ payloadDownloadRate: random(), payloadUploadRate: random() })
     );
     if (i % 2 == 0) {
       yield put(
-        addPointInTime({
+        setStats({
           payloadDownloadRate: random(),
           payloadUploadRate: random(),
         })
       );
       yield put(
-        addPointInTime({
+        setStats({
           payloadDownloadRate: random(),
           payloadUploadRate: random(),
         })
       );
       yield put(
-        addPointInTime({
+        setStats({
           payloadDownloadRate: random(),
           payloadUploadRate: random(),
         })
@@ -224,6 +224,7 @@ function* runUserSagas(deluge) {
     watchSetTorrentState(deluge),
     watchAddTorrentFile(deluge),
     watchRemoveTorrent(deluge),
+    //testStats(),
   ]);
 }
 
@@ -242,7 +243,12 @@ function* login({ payload }) {
     try {
       yield* runUserSagas(deluge);
     } catch (err) {
-      notifyWarning(err);
+      if (err instanceof TimeoutError) {
+        console.error(err);
+      } else {
+        notifyWarning(err);
+      }
+
       try {
         deluge = yield call(connectToDeluge, host, port, username, password);
       } catch (err) {

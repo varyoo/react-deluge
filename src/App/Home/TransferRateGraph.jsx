@@ -13,21 +13,6 @@ const POINTS_COUNT = 40;
 const STROKE_WIDTH = 3;
 const MARGIN = 6;
 
-function appendPath(clipped, color, rates, select) {
-  return clipped
-    .append("path")
-    .datum({
-      rates,
-      push(stats) {
-        rates.push(select(stats));
-      },
-    })
-    .attr("class", "line")
-    .attr("stroke", color)
-    .attr("stroke-width", STROKE_WIDTH)
-    .attr("fill", "none");
-}
-
 class TransferRateGraph extends React.Component {
   constructor() {
     super();
@@ -37,41 +22,26 @@ class TransferRateGraph extends React.Component {
     this.mounted = false;
   }
 
-  componentDidMount() {
-    this.mounted = true;
+  appendPath(color, rates) {
+    return this.container
+      .append("path")
+      .datum(rates)
+      .attr("class", "line")
+      .attr("stroke", color)
+      .attr("stroke-width", STROKE_WIDTH)
+      .attr("fill", "none");
+  }
+
+  animate(color, rates, select) {
     const self = this;
-    const svg = d3.select(this.svgRef.current);
-    const width = svg.attr("width");
-    const height = svg.attr("height");
-    const container = svg
-      .append("g")
-      .attr("transform", "translate(0, " + MARGIN + ")");
-    const uploadRates = this.uploadRates;
-    const downloadRates = this.downloadRates;
-    appendPath(
-      container,
-      COLOR_UPLOAD,
-      uploadRates,
-      ({ payloadUploadRate }) => payloadUploadRate
-    );
-    appendPath(
-      container,
-      COLOR_DOWNLOAD,
-      downloadRates,
-      ({ payloadDownloadRate }) => payloadDownloadRate
-    );
-    const scaleX = d3
-      .scaleLinear()
-      .domain([1, POINTS_COUNT - 2])
-      .range([0, width]);
-    // handle one tick (data point) on one path (either download or upload)
+    const { uploadRates, downloadRates, height, scaleX } = this;
     function tick() {
       if (!self.mounted) {
         return;
       }
       const path = d3.select(this);
-      const { rates, push } = path.datum();
-      push(self.props.stats);
+      const rates = path.datum();
+      rates.push(select(self.props.stats));
       const uploadMax = d3.max(uploadRates);
       const downloadMax = d3.max(downloadRates);
       const yMax = Math.max(Math.max(uploadMax, downloadMax), 1);
@@ -90,11 +60,7 @@ class TransferRateGraph extends React.Component {
         });
 
       // Redraw the line.
-      path
-        .attr("d", function (d) {
-          return line(d.rates);
-        })
-        .attr("transform", null);
+      path.attr("d", line).attr("transform", null);
 
       // Slide it to the left.
       d3.active(this)
@@ -105,13 +71,35 @@ class TransferRateGraph extends React.Component {
       // Pop the old data point off the front.
       rates.shift();
     }
-    // start transition on both uploadPath and downloadPath
-    container
-      .selectAll(".line")
+    this.appendPath(color, rates)
       .transition()
       .duration(1000)
       .ease(d3.easeLinear)
       .on("start", tick);
+  }
+
+  componentDidMount() {
+    const svg = d3.select(this.svgRef.current);
+    this.mounted = true;
+    this.width = svg.attr("width");
+    this.height = svg.attr("height");
+    this.container = svg
+      .append("g")
+      .attr("transform", "translate(0, " + MARGIN + ")");
+    this.scaleX = d3
+      .scaleLinear()
+      .domain([1, POINTS_COUNT - 2])
+      .range([0, this.width]);
+    this.animate(
+      COLOR_UPLOAD,
+      this.uploadRates,
+      ({ payloadUploadRate }) => payloadUploadRate
+    );
+    this.animate(
+      COLOR_DOWNLOAD,
+      this.downloadRates,
+      ({ payloadDownloadRate }) => payloadDownloadRate
+    );
   }
 
   render() {
