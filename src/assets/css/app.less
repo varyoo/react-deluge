@@ -65,8 +65,11 @@ h1 {
 #home-sider {
   position: fixed;
   height: 100vh;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   left: 0;
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.4);
+  z-index: 2;
 }
 
 #home-content-layout {
@@ -76,14 +79,28 @@ h1 {
 
 #home-content-header {
   position: fixed;
-  left: 280px;
-  right: 50px;
+  left: 230px;
+  right: 0px;
   z-index: 1;
-  background-color: @layout-body-background;
+  background-color: #fff;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.4);
+}
+
+#home-content-header .logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#home-content-header .logo .ant-avatar {
+  margin-right: 12px;
 }
 
 #home-content {
-  padding-top: 72px;
+  padding-top: calc(64px + 50px);
 }
 
 @download-color: @success-color;

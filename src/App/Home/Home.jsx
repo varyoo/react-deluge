@@ -1,37 +1,28 @@
-import React, { useCallback } from "react";
+import React from "react";
 import TorrentList from "./TorrentList";
-import AddTorrent, { openAddTorrent } from "./TorrentList/AddTorrent";
-import { Button, Layout, PageHeader, Menu, Divider } from "antd";
+import AddTorrent from "./TorrentList/AddTorrent";
+import { Layout, Menu } from "antd";
 import {
   CheckOutlined,
   CloudOutlined,
   CloudUploadOutlined,
   CloudDownloadOutlined,
   FireOutlined,
-  LogoutOutlined,
   PauseOutlined,
-  PlusOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import RemoveTorrent from "./TorrentList/RemoveTorrent";
-import { logout } from "../../user";
 import SideStats from "./SideStats";
 import { WIDTH_SIDER } from "../../utils";
 import { filterByStatus } from "./reducer";
-import { ResumeButton, PauseButton, RemoveButton } from "./buttons";
+import HomeHeaderContent from "./HomeHeaderContent";
 
-const { Content, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 function Home() {
   const dispatch = useDispatch();
-  const onAddTorrent = useCallback(() => {
-    dispatch(openAddTorrent());
-  }, [dispatch]);
-  const onLogout = useCallback(() => {
-    dispatch(logout());
-  }, [dispatch]);
   const handleStatusClick = ({ key }) => {
     let filter;
     if (key !== "All") {
@@ -39,7 +30,6 @@ function Home() {
     }
     dispatch(filterByStatus(filter));
   };
-  const { selectedHash } = useSelector((state) => state.home);
   return (
     <Layout style={{ height: "100vh" }}>
       <AddTorrent />
@@ -80,26 +70,9 @@ function Home() {
       </Sider>
       <Layout id="home-content-layout">
         <Content>
-          <div id="home-content-header">
-            <PageHeader
-              title="React-Deluge"
-              avatar={{ icon: <CloudUploadOutlined /> }}
-              extra={[
-                <ResumeButton key="resume" hash={selectedHash} />,
-                <PauseButton key="pause" hash={selectedHash} />,
-                <RemoveButton key="remove" hash={selectedHash} />,
-                <Divider key="sep" type="vertical" />,
-                <Button key="add" type="primary" onClick={onAddTorrent}>
-                  <PlusOutlined />
-                  Add New Torrent
-                </Button>,
-                <Button key="2" onClick={onLogout}>
-                  <LogoutOutlined />
-                  Log Out
-                </Button>,
-              ]}
-            />
-          </div>
+          <Header id="home-content-header">
+            <HomeHeaderContent />
+          </Header>
           <div id="home-content">
             <TorrentList />
           </div>
