@@ -3,9 +3,15 @@ import TorrentList from "./TorrentList";
 import AddTorrent, { openAddTorrent } from "./TorrentList/AddTorrent";
 import { Button, Layout, PageHeader, Menu } from "antd";
 import {
+  CheckOutlined,
+  CloudOutlined,
   CloudUploadOutlined,
+  CloudDownloadOutlined,
+  FireOutlined,
   LogoutOutlined,
+  PauseOutlined,
   PlusOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import RemoveTorrent from "./TorrentList/RemoveTorrent";
@@ -46,13 +52,27 @@ function Home() {
           theme="dark"
         >
           <SubMenu key="status" title="Filter by status" onClick={handleStatusClick}>
-            <Menu.Item key="All">All</Menu.Item>
-            <Menu.Item key="Active">Active</Menu.Item>
-            <Menu.Item key="Checking">Checking</Menu.Item>
-            <Menu.Item key="Downloading">Downloading</Menu.Item>
-            <Menu.Item key="Seeding">Seeding</Menu.Item>
-            <Menu.Item key="Paused">Paused</Menu.Item>
-            <Menu.Item key="Error">Error</Menu.Item>
+            <Menu.Item key="All" icon={<CloudOutlined />}>
+              All
+            </Menu.Item>
+            <Menu.Item key="Active" icon={<FireOutlined />}>
+              Active
+            </Menu.Item>
+            <Menu.Item key="Checking" icon={<CheckOutlined />}>
+              Checking
+            </Menu.Item>
+            <Menu.Item key="Downloading" icon={<CloudDownloadOutlined />}>
+              Downloading
+            </Menu.Item>
+            <Menu.Item key="Seeding" icon={<CloudUploadOutlined />}>
+              Seeding
+            </Menu.Item>
+            <Menu.Item key="Paused" icon={<PauseOutlined />}>
+              Paused
+            </Menu.Item>
+            <Menu.Item key="Error" icon={<WarningOutlined />}>
+              Error
+            </Menu.Item>
           </SubMenu>
         </Menu>
       </Sider>
