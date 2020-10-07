@@ -8,6 +8,7 @@ const initialState = {
   torrents: [],
   statusFilter: undefined,
   tableData: undefined,
+  selectedHash: undefined,
 };
 
 const slice = createSlice({
@@ -23,8 +24,20 @@ const slice = createSlice({
     filterByStatus(state, { payload }) {
       state.statusFilter = payload;
     },
+    selectHash(state, { payload }) {
+      state.selectedHash = payload;
+    },
+    selectNone(state) {
+      state.selectedHash = undefined;
+    },
   },
 });
 
-export const { setStats, setTableData, filterByStatus } = slice.actions;
+export const {
+  setStats,
+  setTableData,
+  filterByStatus,
+  selectHash,
+  selectNone,
+} = slice.actions;
 export default slice.reducer;

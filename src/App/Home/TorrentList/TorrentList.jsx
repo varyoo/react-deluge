@@ -1,7 +1,7 @@
-import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
+import React, { useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Table, Progress } from "antd";
-import { ResumeButton, PauseButton, RemoveButton } from "./buttons";
+import { selectHash, selectNone } from "../reducer";
 
 function getColumns() {
   return [
@@ -9,24 +9,6 @@ function getColumns() {
       title: "Name",
       dataIndex: "name",
       key: "name",
-    },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      key: "actions",
-      render: (text, record) => {
-        const hash = record.hash;
-        return (
-          <div>
-            <ResumeButton hash={hash} />
-            &nbsp;
-            <PauseButton hash={hash} />
-            &nbsp;
-            <RemoveButton hash={hash} />
-            &nbsp;
-          </div>
-        );
-      },
     },
     {
       title: "State",
@@ -51,8 +33,38 @@ function getColumns() {
 }
 
 function TorrentList() {
-  const { tableData } = useSelector((state) => state.home);
+  const { tableData, selectedHash } = useSelector((state) => state.home);
   const columns = useMemo(getColumns, []);
-  return <Table columns={columns} dataSource={tableData} />;
+  const [state, setState] = useState({
+    selectedRowKeys: [],
+  });
+  const rowSelection = {
+    selectedRowKeys: state.selectedRowKeys,
+    type: "radio",
+  };
+  const dispatch = useDispatch();
+  const selectRow = (record) => {
+    const { key, hash } = record;
+    let actionToDispatch;
+    const newSelectedRowKeys = [];
+    if (selectedHash === hash) {
+      actionToDispatch = selectNone();
+    } else {
+      actionToDispatch = selectHash(hash);
+      newSelectedRowKeys.push(key);
+    }
+    setState({ ...state, selectedRowKeys: newSelectedRowKeys });
+    dispatch(actionToDispatch);
+  };
+  return (
+    <Table
+      columns={columns}
+      dataSource={tableData}
+      rowSelection={rowSelection}
+      onRow={(record) => ({
+        onClick: () => selectRow(record),
+      })}
+    />
+  );
 }
 export default TorrentList;

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import TorrentList from "./TorrentList";
 import AddTorrent, { openAddTorrent } from "./TorrentList/AddTorrent";
-import { Button, Layout, PageHeader, Menu } from "antd";
+import { Button, Layout, PageHeader, Menu, Divider } from "antd";
 import {
   CheckOutlined,
   CloudOutlined,
@@ -13,12 +13,13 @@ import {
   PlusOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import RemoveTorrent from "./TorrentList/RemoveTorrent";
 import { logout } from "../../user";
 import SideStats from "./SideStats";
 import { WIDTH_SIDER } from "../../utils";
 import { filterByStatus } from "./reducer";
+import { ResumeButton, PauseButton, RemoveButton } from "./buttons";
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -38,11 +39,12 @@ function Home() {
     }
     dispatch(filterByStatus(filter));
   };
+  const { selectedHash } = useSelector((state) => state.home);
   return (
     <Layout style={{ height: "100vh" }}>
       <AddTorrent />
       <RemoveTorrent />
-      <Sider width={WIDTH_SIDER}>
+      <Sider width={WIDTH_SIDER} id="home-sider">
         <SideStats width={WIDTH_SIDER} />
         <Menu
           mode="inline"
@@ -76,23 +78,31 @@ function Home() {
           </SubMenu>
         </Menu>
       </Sider>
-      <Layout style={{ padding: "0 50px" }}>
+      <Layout id="home-content-layout">
         <Content>
-          <PageHeader
-            title="React-Deluge"
-            avatar={{ icon: <CloudUploadOutlined /> }}
-            extra={[
-              <Button key="1" type="primary" onClick={onAddTorrent}>
-                <PlusOutlined />
-                Add New Torrent
-              </Button>,
-              <Button key="2" onClick={onLogout}>
-                <LogoutOutlined />
-                Log Out
-              </Button>,
-            ]}
-          />
-          <TorrentList />
+          <div id="home-content-header">
+            <PageHeader
+              title="React-Deluge"
+              avatar={{ icon: <CloudUploadOutlined /> }}
+              extra={[
+                <ResumeButton key="resume" hash={selectedHash} />,
+                <PauseButton key="pause" hash={selectedHash} />,
+                <RemoveButton key="remove" hash={selectedHash} />,
+                <Divider key="sep" type="vertical" />,
+                <Button key="add" type="primary" onClick={onAddTorrent}>
+                  <PlusOutlined />
+                  Add New Torrent
+                </Button>,
+                <Button key="2" onClick={onLogout}>
+                  <LogoutOutlined />
+                  Log Out
+                </Button>,
+              ]}
+            />
+          </div>
+          <div id="home-content">
+            <TorrentList />
+          </div>
         </Content>
       </Layout>
     </Layout>

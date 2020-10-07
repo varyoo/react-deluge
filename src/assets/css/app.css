@@ -60,3 +60,27 @@ h1 {
 #side-stats .ant-statistic-content-prefix {
   font-size: 16px;
 }
+
+#home-sider {
+  position: fixed;
+  height: 100vh;
+  overflow: auto;
+  left: 0;
+}
+
+#home-content-layout {
+  margin-left: 230px;
+  padding: 0 50px;
+}
+
+#home-content-header {
+  position: fixed;
+  left: 280px;
+  right: 50px;
+  z-index: 1;
+  background-color: #f0f2f5;
+}
+
+#home-content {
+  padding-top: 72px;
+}
