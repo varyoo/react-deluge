@@ -51,7 +51,7 @@ function getColumns() {
 }
 
 function TorrentList() {
-  const { tableData } = useSelector((state) => state.torrentList);
+  const { tableData } = useSelector((state) => state.home);
   const columns = useMemo(getColumns, []);
   return <Table columns={columns} dataSource={tableData} />;
 }

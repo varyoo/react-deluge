@@ -1,7 +1,6 @@
-import { call, put, takeLatest, delay, all, race } from "redux-saga/effects";
+import { call, put, takeLatest, delay, all, race, select } from "redux-saga/effects";
 import DelugeRPC, { isRPCError } from "deluge-rpc-socket";
 import { connect } from "tls";
-import { setTableData } from "../App/Home/TorrentList";
 import { SET_STATE, ADD_TORRENT_FILE, REMOVE_TORRENT, LOGIN } from "../actions";
 import { readFileSync } from "fs";
 import {
@@ -14,7 +13,7 @@ import { onLoginSuccess, onLoginFailed, setUser as saveUser } from "../user";
 import { notifyError, notifyWarning } from "../notify";
 import { setDownloadLocation } from "../App/Home/TorrentList/AddTorrent";
 import { getDelugeErrorMessage, TimeoutError } from "../utils";
-import { setStats } from "../App/Home";
+import { setStats, setTableData } from "../App/Home";
 
 function getSocket(host, port) {
   return connect({
@@ -36,7 +35,7 @@ export function* connectToDeluge(host, port, username, password) {
     timeout: delay(1000),
   });
   if (timeout) {
-    throw new TimeoutError();
+    throw new TimeoutError("timed out");
   }
 
   const deluge = getDeluge(socket);
@@ -84,13 +83,22 @@ function* runRequest({ sent, result }) {
     timeout: delay(1000),
   });
   if (timeout) {
-    throw new TimeoutError();
+    throw new TimeoutError("timed out");
   }
   return res;
 }
 
+function getStateFilter(state) {
+  return state.home.statusFilter;
+}
+
 function* getTorrents(deluge) {
-  let request = deluge.core.getTorrentsStatus([], [], {});
+  const stateFilter = yield select(getStateFilter);
+  const filterDict = {};
+  if (stateFilter) {
+    filterDict.state = stateFilter;
+  }
+  const request = deluge.core.getTorrentsStatus(filterDict, [], {});
   return yield call(runRequest, request);
 }
 

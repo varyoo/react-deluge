@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import TorrentList from "./TorrentList";
 import AddTorrent, { openAddTorrent } from "./TorrentList/AddTorrent";
-import { Button, Layout, PageHeader } from "antd";
+import { Button, Layout, PageHeader, Menu } from "antd";
 import {
   CloudUploadOutlined,
   LogoutOutlined,
@@ -12,8 +12,10 @@ import RemoveTorrent from "./TorrentList/RemoveTorrent";
 import { logout } from "../../user";
 import SideStats from "./SideStats";
 import { WIDTH_SIDER } from "../../utils";
+import { filterByStatus } from "./reducer";
 
 const { Content, Sider } = Layout;
+const { SubMenu } = Menu;
 
 function Home() {
   const dispatch = useDispatch();
@@ -23,12 +25,36 @@ function Home() {
   const onLogout = useCallback(() => {
     dispatch(logout());
   }, [dispatch]);
+  const handleStatusClick = ({ key }) => {
+    let filter;
+    if (key !== "All") {
+      filter = key;
+    }
+    dispatch(filterByStatus(filter));
+  };
   return (
     <Layout style={{ height: "100vh" }}>
       <AddTorrent />
       <RemoveTorrent />
       <Sider width={WIDTH_SIDER}>
         <SideStats width={WIDTH_SIDER} />
+        <Menu
+          mode="inline"
+          defaultSelectedKeys={["All"]}
+          defaultOpenKeys={["status"]}
+          style={{ borderRight: 0 }}
+          theme="dark"
+        >
+          <SubMenu key="status" title="Filter by status" onClick={handleStatusClick}>
+            <Menu.Item key="All">All</Menu.Item>
+            <Menu.Item key="Active">Active</Menu.Item>
+            <Menu.Item key="Checking">Checking</Menu.Item>
+            <Menu.Item key="Downloading">Downloading</Menu.Item>
+            <Menu.Item key="Seeding">Seeding</Menu.Item>
+            <Menu.Item key="Paused">Paused</Menu.Item>
+            <Menu.Item key="Error">Error</Menu.Item>
+          </SubMenu>
+        </Menu>
       </Sider>
       <Layout style={{ padding: "0 50px" }}>
         <Content>
