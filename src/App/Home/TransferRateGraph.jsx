@@ -6,7 +6,6 @@
 import React, { createRef } from "react";
 import { connect } from "react-redux";
 import * as d3 from "d3";
-import { COLOR_DOWNLOAD, COLOR_UPLOAD } from "../../utils";
 import PropTypes from "prop-types";
 
 const POINTS_COUNT = 40;
@@ -22,17 +21,16 @@ class TransferRateGraph extends React.Component {
     this.mounted = false;
   }
 
-  appendPath(color, rates) {
+  appendPath(rates, pathClass) {
     return this.container
       .append("path")
       .datum(rates)
-      .attr("class", "line")
-      .attr("stroke", color)
+      .attr("class", "line " + pathClass)
       .attr("stroke-width", STROKE_WIDTH)
       .attr("fill", "none");
   }
 
-  animate(color, rates, select) {
+  animate(rates, select, pathClass) {
     const self = this;
     const { uploadRates, downloadRates, height, scaleX } = this;
     function tick() {
@@ -71,7 +69,7 @@ class TransferRateGraph extends React.Component {
       // Pop the old data point off the front.
       rates.shift();
     }
-    this.appendPath(color, rates)
+    this.appendPath(rates, pathClass)
       .transition()
       .duration(1000)
       .ease(d3.easeLinear)
@@ -91,14 +89,14 @@ class TransferRateGraph extends React.Component {
       .domain([1, POINTS_COUNT - 2])
       .range([0, this.width]);
     this.animate(
-      COLOR_UPLOAD,
       this.uploadRates,
-      ({ payloadUploadRate }) => payloadUploadRate
+      ({ payloadUploadRate }) => payloadUploadRate,
+      "upload"
     );
     this.animate(
-      COLOR_DOWNLOAD,
       this.downloadRates,
-      ({ payloadDownloadRate }) => payloadDownloadRate
+      ({ payloadDownloadRate }) => payloadDownloadRate,
+      "download"
     );
   }
 

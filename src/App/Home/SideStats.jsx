@@ -1,6 +1,5 @@
 import React from "react";
 import { Row, Col, Statistic } from "antd";
-import { COLOR_DOWNLOAD, COLOR_UPLOAD } from "../../utils";
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import TransferRateGraph from "./TransferRateGraph";
@@ -52,14 +51,15 @@ function explodeBytes(bytes, precision = 2) {
   return { value, unit };
 }
 
-function Speed({ color, icon, rate }) {
+function Speed({ icon, rate, ...restProps }) {
   const { value, unit } = explodeBytes(rate, 1);
   return (
     <Statistic
+      {...restProps}
       value={value}
-      valueStyle={{ color }}
       prefix={icon}
       suffix={unit + "/s"}
+      class="lol"
     />
   );
 }
@@ -76,14 +76,14 @@ export default function SideStats({ width }) {
             <Speed
               icon={<ArrowDownOutlined height="2" />}
               rate={payloadDownloadRate}
-              color={COLOR_DOWNLOAD}
+              className="statistic-download"
             />
           </Col>
-          <Col span={12}>
+          <Col span={12} class="statistic-upload">
             <Speed
               icon={<ArrowUpOutlined height="0.5em" />}
               rate={payloadUploadRate}
-              color={COLOR_UPLOAD}
+              className="statistic-upload"
             />
           </Col>
         </Row>

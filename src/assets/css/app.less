@@ -1,4 +1,5 @@
-@import '~antd/dist/antd.css';
+//@import '~antd/dist/antd.css';
+@import "~antd/dist/antd.less";
 
 /* Main CSS stylesheet */
 html,
@@ -78,9 +79,28 @@ h1 {
   left: 280px;
   right: 50px;
   z-index: 1;
-  background-color: #f0f2f5;
+  background-color: @layout-body-background;
 }
 
 #home-content {
   padding-top: 72px;
+}
+
+@download-color: @success-color;
+@upload-color: @primary-color;
+
+.statistic-download .ant-statistic-content {
+  color: @download-color;
+}
+
+.statistic-upload .ant-statistic-content {
+  color: @upload-color;
+}
+
+path.upload {
+  stroke: @upload-color;
+}
+
+path.download {
+  stroke: @download-color;
 }

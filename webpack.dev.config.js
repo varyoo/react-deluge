@@ -18,6 +18,22 @@ module.exports = {
         include: defaultInclude,
       },
       {
+        test: /\.less$/,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" },
+          {
+            loader: "less-loader",
+            options: {
+              lessOptions: {
+                javascriptEnabled: true,
+              },
+            },
+          },
+        ],
+        include: [defaultInclude, path.resolve(__dirname, "node_modules/antd")],
+      },
+      {
         test: /\.jsx?$/,
         use: [{ loader: "babel-loader" }],
         include: defaultInclude,
@@ -36,7 +52,7 @@ module.exports = {
   },
   resolve: {
     // https://stackoverflow.com/a/61904918/4280284
-    extensions: [".web.js", ".mjs", ".js", ".json", ".web.jsx", ".jsx"],
+    extensions: [".web.js", ".mjs", ".js", ".json", ".web.jsx", ".jsx", ".less"],
   },
   target: "electron-renderer",
   plugins: [
