@@ -62,26 +62,23 @@ h1 {
   font-size: 16px;
 }
 
-#home-sider {
+#torrents-sider {
   position: fixed;
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
   left: 0;
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.4);
-  z-index: 2;
-}
-
-#home-content-layout {
-  margin-left: 230px;
-  padding: 0 50px;
-}
-
-#home-content-header {
-  position: fixed;
-  left: 230px;
-  right: 0px;
   z-index: 1;
+}
+
+#torrents-main {
+  margin-left: 230px;
+  padding: 0 16px;
+}
+
+#home-header {
+  z-index: 2;
   background-color: #fff;
   display: flex;
   justify-content: space-between;
@@ -89,18 +86,18 @@ h1 {
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.4);
 }
 
-#home-content-header .logo {
+#home-header .logo {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-#home-content-header .logo .ant-avatar {
+#home-header .logo .ant-avatar {
   margin-right: 12px;
 }
 
 #home-content {
-  padding-top: calc(64px + 50px);
+  padding-top: 16px;
 }
 
 @download-color: @success-color;
