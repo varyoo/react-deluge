@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Table, Progress } from "antd";
 import { selectHash, selectNone } from "../reducer";
+import ContainerDimensions from "react-container-dimensions";
 
 function getColumns() {
   return [
@@ -9,16 +10,19 @@ function getColumns() {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      width: "40%",
     },
     {
       title: "State",
       dataIndex: "state",
       key: "state",
+      width: "10%",
     },
     {
       title: "Progress",
       dataIndex: "progress",
       key: "progress",
+      width: "20%",
       render: (text, record) => {
         const percent = record.progress * 100;
         return <Progress percent={percent.toFixed(2)} />;
@@ -28,6 +32,7 @@ function getColumns() {
       title: "Save path",
       dataIndex: "savePath",
       key: "savePath",
+      width: "30%",
     },
   ];
 }
@@ -57,14 +62,27 @@ function TorrentList() {
     dispatch(actionToDispatch);
   };
   return (
-    <Table
-      columns={columns}
-      dataSource={tableData}
-      rowSelection={rowSelection}
-      onRow={(record) => ({
-        onClick: () => selectRow(record),
-      })}
-    />
+    <div id="torrents-dimensions">
+      <ContainerDimensions>
+        {({ height }) => {
+          console.log("height", height);
+          return (
+            <Table
+              columns={columns}
+              dataSource={tableData}
+              rowSelection={rowSelection}
+              onRow={(record) => ({
+                onClick: () => selectRow(record),
+                onDoubleClick: () => {},
+              })}
+              scroll={{ y: height - 47 }}
+              pagination={false}
+              size="middle"
+            />
+          );
+        }}
+      </ContainerDimensions>
+    </div>
   );
 }
 export default TorrentList;

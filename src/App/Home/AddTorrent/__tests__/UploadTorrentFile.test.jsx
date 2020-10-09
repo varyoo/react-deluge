@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 import { createStore } from "redux";
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import rootReducer from "../../../../../rootReducer";
+import rootReducer from "../../../../rootReducer";
 import UploadTorrentFile from "../UploadTorrentFile";
 
 function getFile(basename) {

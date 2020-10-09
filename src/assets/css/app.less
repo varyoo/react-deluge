@@ -62,19 +62,32 @@ h1 {
   font-size: 16px;
 }
 
+#torrents-layout {
+  display: flex;
+  flex-direction: row;
+}
+
 #torrents-sider {
-  position: fixed;
-  height: 100vh;
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  left: 0;
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.4);
   z-index: 1;
 }
 
 #torrents-main {
-  margin-left: 230px;
-  padding: 0 16px;
+  padding: 0;
+}
+
+#torrents-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#torrents-dimensions {
+  height: 100%;
+  overflow-y: hidden;
 }
 
 #home-header {
@@ -117,4 +130,12 @@ path.upload {
 
 path.download {
   stroke: @download-color;
+}
+
+.files-modal .ant-modal-header {
+  border-bottom: none;
+}
+
+.files-modal .ant-modal-body {
+  padding-top: 0;
 }

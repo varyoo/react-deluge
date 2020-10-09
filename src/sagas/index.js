@@ -1,19 +1,11 @@
-import { call, put, takeLatest, delay, all, race, select } from "redux-saga/effects";
+import { call, put, takeLatest, delay, all, race } from "redux-saga/effects";
 import DelugeRPC, { isRPCError } from "deluge-rpc-socket";
 import { connect } from "tls";
-import { SET_STATE, ADD_TORRENT_FILE, REMOVE_TORRENT, LOGIN } from "../actions";
-import { readFileSync } from "fs";
-import {
-  setAddTorrentError,
-  onTorrentAdded,
-} from "../App/Home/TorrentList/AddTorrent";
-import { closeRemoveTorrent } from "../App/Home/TorrentList/RemoveTorrent";
-import { basename } from "path";
+import { LOGIN } from "../actions";
 import { onLoginSuccess, onLoginFailed, setUser as saveUser } from "../user";
-import { notifyError, notifyWarning } from "../notify";
-import { setDownloadLocation } from "../App/Home/TorrentList/AddTorrent";
+import { notifyWarning } from "../notify";
 import { getDelugeErrorMessage, TimeoutError } from "../utils";
-import { setStats, setTableData } from "../App/Home";
+import runUserSagas from "./torrents";
 
 function getSocket(host, port) {
   return connect({
@@ -58,132 +50,6 @@ export function* connectToDeluge(host, port, username, password) {
   return deluge;
 }
 
-function getTorrentsTableData(torrents) {
-  const data = [];
-  for (const hash in torrents) {
-    const torrent = torrents[hash];
-    const { name, totalDone, totalSize, savePath, state } = torrent;
-    const row = {
-      hash,
-      name,
-      key: hash,
-      progress: totalDone / parseFloat(totalSize),
-      savePath,
-      state,
-    };
-    data.push(row);
-  }
-  return data;
-}
-
-function* runRequest({ sent, result }) {
-  yield sent;
-  const { res, timeout } = yield race({
-    res: result,
-    timeout: delay(1000),
-  });
-  if (timeout) {
-    throw new TimeoutError("timed out");
-  }
-  return res;
-}
-
-function getStateFilter(state) {
-  return state.home.statusFilter;
-}
-
-function* getTorrents(deluge) {
-  const stateFilter = yield select(getStateFilter);
-  const filterDict = {};
-  if (stateFilter) {
-    filterDict.state = stateFilter;
-  }
-  const request = deluge.core.getTorrentsStatus(filterDict, [], {});
-  return yield call(runRequest, request);
-}
-
-function* getStats(deluge) {
-  const request = deluge.core.getSessionStatus([
-    "payload_download_rate",
-    "payload_upload_rate",
-  ]);
-  return yield call(runRequest, request);
-}
-
-function* pollTorrentList(deluge) {
-  while (true) {
-    const torrents = yield call(getTorrents, deluge);
-    const tableData = yield call(getTorrentsTableData, torrents);
-    yield put(setTableData(tableData));
-
-    const stats = yield call(getStats, deluge);
-    yield put(setStats(stats));
-
-    yield delay(1000);
-  }
-}
-
-function* setTorrentState(deluge, { payload }) {
-  const { action, hash } = payload;
-  const { sent, result } =
-    action === "pause"
-      ? deluge.core.pauseTorrent([hash])
-      : deluge.core.resumeTorrent([hash]);
-  yield sent;
-  yield result;
-}
-
-export function* watchSetTorrentState(deluge) {
-  yield takeLatest(SET_STATE, setTorrentState, deluge);
-}
-
-function* addTorrentFile(deluge, { payload }) {
-  const { downloadLocation, localPath, options } = payload;
-  const filename = basename(localPath);
-  const buffer = yield new Promise((resolve, reject) => {
-    resolve(readFileSync(localPath));
-  });
-  const { sent, result } = deluge.core.addTorrentFile(filename, buffer, {
-    ...options,
-    download_location: downloadLocation,
-  });
-  try {
-    yield sent;
-    const res = yield result;
-    if (isRPCError(res)) {
-      yield put(setAddTorrentError(getDelugeErrorMessage(res)));
-      return;
-    }
-    setDownloadLocation(downloadLocation);
-    yield put(onTorrentAdded());
-  } catch (err) {
-    yield put(setAddTorrentError(err.message));
-  }
-}
-
-function* watchAddTorrentFile(deluge) {
-  yield takeLatest(ADD_TORRENT_FILE, addTorrentFile, deluge);
-}
-
-function* removeTorrent(deluge, { payload }) {
-  const { hashToRemove, deleteData } = payload;
-  const { sent, result } = deluge.core.removeTorrent(hashToRemove, deleteData);
-  try {
-    yield sent;
-    const res = yield result;
-    if (isRPCError(res)) {
-      notifyError(getDelugeErrorMessage(res), { tag: "Torrent removal" });
-    }
-  } catch (err) {
-    notifyError(err, { tag: "Torrent removal" });
-  }
-  yield put(closeRemoveTorrent());
-}
-
-function* watchRemoveTorrent(deluge) {
-  yield takeLatest(REMOVE_TORRENT, removeTorrent, deluge);
-}
-
 /**
  * feed fake stats to Redux
  */
@@ -218,23 +84,6 @@ function* watchRemoveTorrent(deluge) {
     i++;
   }
 }*/
-
-/**
- * Redux-saga's all() is actually all-or-nothing:
- * if one of the tasks throws an error,
- * all tasks that are stil running are cancelled.
- * https://redux-saga.js.org/docs/advanced/ForkModel.html
- * @param {*} deluge socket
- */
-function* runUserSagas(deluge) {
-  yield all([
-    pollTorrentList(deluge),
-    watchSetTorrentState(deluge),
-    watchAddTorrentFile(deluge),
-    watchRemoveTorrent(deluge),
-    //testStats(),
-  ]);
-}
 
 function* login({ payload }) {
   const { host, port, username, password } = payload;

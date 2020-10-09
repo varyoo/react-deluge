@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { Modal, Form, Button, Checkbox } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { closeRemoveTorrent } from ".";
-import { removeTorrent } from "../../../../actions";
+import { removeTorrent } from "../../../actions";
 import { DeleteOutlined } from "@ant-design/icons";
 
 export default function RemoveTorrent() {

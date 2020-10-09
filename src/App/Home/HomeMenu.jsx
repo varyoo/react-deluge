@@ -1,7 +1,7 @@
 import React from "react";
 import { Menu } from "antd";
 import { PlusOutlined, LogoutOutlined } from "@ant-design/icons";
-import { openAddTorrent } from "./TorrentList/AddTorrent";
+import { openAddTorrent } from "./AddTorrent";
 import { logout } from "../../user";
 import { useDispatch } from "react-redux";
 

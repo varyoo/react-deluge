@@ -6,9 +6,11 @@ import {
   PlayCircleOutlined,
   PauseCircleOutlined,
   DeleteOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import * as actions from "../../actions";
-import { openRemoveTorrent } from "./TorrentList/RemoveTorrent";
+import { openRemoveTorrent } from "./RemoveTorrent";
+import { openDetails } from "./TorrentDetails";
 
 function mapStateToProps(state) {
   const { selectedHash: hash } = state.home;
@@ -51,6 +53,13 @@ function TorrentsContent({ hash, dispatch }) {
             title="Pause"
             action={actions.pause}
             key="pause"
+          />,
+          <Extra
+            {...extraProps}
+            icon={<EyeOutlined />}
+            title="Details"
+            action={openDetails}
+            key="details"
           />,
           <Extra
             {...extraProps}

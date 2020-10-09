@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { Alert, Button, Form, Input } from "antd";
 import PropTypes from "prop-types";
-import { addTorrentFile } from "../../../../actions";
+import { addTorrentFile } from "../../../actions";
 import { useDispatch } from "react-redux";
 import UploadTorrentFile from "./UploadTorrentFile";
 import { getDownloadLocation } from "./storage";
