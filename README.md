@@ -13,9 +13,9 @@ The very first React Front-end for the Deluge BitTorrent client.
 ## Screenshots
 
 ![react-deluge-login](https://user-images.githubusercontent.com/8150894/95030169-4e67f500-069d-11eb-950c-34c66e40335c.png)
-![react-deluge-downloads](https://user-images.githubusercontent.com/8150894/95485951-ed347000-0981-11eb-8486-075f2820de50.png)
+![react-deluge-downloads](https://user-images.githubusercontent.com/8150894/95607386-3270a480-0a4b-11eb-8497-b527eef01b6e.png)
 ![react-deluge-add](https://user-images.githubusercontent.com/8150894/95485954-eefe3380-0981-11eb-9978-8410b152a9e8.png)
-
+![react-deluge-details](https://user-images.githubusercontent.com/8150894/95607395-356b9500-0a4b-11eb-8d96-cbdc5391ae91.png)
 
 ## Arch Linux package
 

@@ -10,19 +10,18 @@ function getColumns() {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: "40%",
     },
     {
       title: "State",
       dataIndex: "state",
       key: "state",
-      width: "10%",
+      width: "120px",
     },
     {
       title: "Progress",
       dataIndex: "progress",
       key: "progress",
-      width: "20%",
+      width: "180px",
       render: (text, record) => {
         const percent = record.progress * 100;
         return <Progress percent={percent.toFixed(2)} />;
@@ -32,7 +31,6 @@ function getColumns() {
       title: "Save path",
       dataIndex: "savePath",
       key: "savePath",
-      width: "30%",
     },
   ];
 }
@@ -77,7 +75,7 @@ function TorrentList() {
               })}
               scroll={{ y: height - 47 }}
               pagination={false}
-              size="middle"
+              size="large"
             />
           );
         }}
