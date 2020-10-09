@@ -63,7 +63,6 @@ function TorrentList() {
     <div id="torrents-dimensions">
       <ContainerDimensions>
         {({ height }) => {
-          console.log("height", height);
           return (
             <Table
               columns={columns}

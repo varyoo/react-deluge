@@ -51,6 +51,12 @@ npm i --save-dev eslint-config-react-app \
           "ignoreRestSiblings": false,
           "argsIgnorePattern": "^_" 
         }
+      ],
+      "no-console": [
+        "error",
+        {
+          "allow": ["warn", "error"]
+        }
       ]
     }
   }

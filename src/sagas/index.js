@@ -32,9 +32,9 @@ export function* connectToDeluge(host, port, username, password) {
 
   const deluge = getDeluge(socket);
   // Listen for asynchronous events from daemon
-  deluge.events.on("delugeEvent", console.log);
+  deluge.events.on("delugeEvent", console.warn);
   // Non fatal decoding errors that indicate something is wrong with the protocol...
-  deluge.events.on("decodingError", console.log);
+  deluge.events.on("decodingError", console.error);
 
   yield new Promise(function (resolve, reject) {
     socket.on("secureConnect", resolve);
